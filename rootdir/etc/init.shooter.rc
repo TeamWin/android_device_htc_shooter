@@ -1,0 +1,94 @@
+# TODO: Remove un-necessary partition in "on emmc" section after mfgkernel 
+#       is ready, it should be independent to system & data partition
+on emmc
+    mkdir /system
+    mkdir /data 0771 system system
+    mkdir /persist 0771 system system
+
+    devwait emmc@system
+    mount ext4 emmc@system /system rw data=ordered
+    umount /system
+
+#    devwait /dev/block/mmcblk0p23
+#    mount ext3 /dev/block/mmcblk0p23 /system ro
+#    devwait /dev/block/mmcblk0p31
+#    exec /sbin/e2fsck -p /dev/block/mmcblk0p31
+#    mount ext3 /dev/block/mmcblk0p31 /data nosuid nodev
+
+    mkdir /devlog 0700 root root
+    devwait emmc@devlog          
+    exec /sbin/e2fsck_recvy -p emmc@devlog
+    mount ext4 emmc@devlog /devlog noatime nosuid nodev data=ordered
+
+    mkdir /vendor               0771 system system
+    mkdir /vendor/firmware      0771 system system
+    mkdir /vendor/firmware/misc 0771 system system
+    mkdir /vendor/firmware/adsp 0771 system system
+    devwait emmc@radio
+    devwait emmc@adsp
+    mount vfat emmc@radio /vendor/firmware/misc ro shortname=lower
+    mount vfat emmc@adsp /vendor/firmware/adsp ro shortname=lower
+    symlink /vendor/firmware/adsp/q6.b09 /vendor/firmware/q6.b09
+    symlink /vendor/firmware/adsp/q6.b08 /vendor/firmware/q6.b08
+    symlink /vendor/firmware/adsp/q6.b07 /vendor/firmware/q6.b07
+    symlink /vendor/firmware/adsp/q6.b06 /vendor/firmware/q6.b06
+    symlink /vendor/firmware/adsp/q6.b05 /vendor/firmware/q6.b05
+    symlink /vendor/firmware/adsp/q6.b04 /vendor/firmware/q6.b04
+    symlink /vendor/firmware/adsp/q6.b03 /vendor/firmware/q6.b03
+    symlink /vendor/firmware/adsp/q6.b02 /vendor/firmware/q6.b02
+    symlink /vendor/firmware/adsp/q6.b01 /vendor/firmware/q6.b01
+    symlink /vendor/firmware/adsp/q6.b00 /vendor/firmware/q6.b00
+    symlink /vendor/firmware/adsp/q6.mdt /vendor/firmware/q6.mdt
+    symlink /vendor/firmware/misc/modem.b09 /vendor/firmware/modem.b09
+    symlink /vendor/firmware/misc/modem.b08 /vendor/firmware/modem.b08
+    symlink /vendor/firmware/misc/modem.b07 /vendor/firmware/modem.b07
+    symlink /vendor/firmware/misc/modem.b06 /vendor/firmware/modem.b06
+    symlink /vendor/firmware/misc/modem.b05 /vendor/firmware/modem.b05
+    symlink /vendor/firmware/misc/modem.b04 /vendor/firmware/modem.b04
+    symlink /vendor/firmware/misc/modem.b03 /vendor/firmware/modem.b03
+    symlink /vendor/firmware/misc/modem.b02 /vendor/firmware/modem.b02
+    symlink /vendor/firmware/misc/modem.b01 /vendor/firmware/modem.b01
+    symlink /vendor/firmware/misc/modem.b00 /vendor/firmware/modem.b00
+    symlink /vendor/firmware/misc/modem.mdt /vendor/firmware/modem.mdt
+
+#
+#  Create a remote storage service in recovery mode if eMMC booting
+#
+service rmt_storage /sbin/rmt_storage /dev/block/mmcblk0p27 /dev/block/mmcblk0p28 /dev/block/mmcblk0p19
+    user root
+    disabled
+
+on property:ro.emmc=1
+    start rmt_storage
+
+service port-bridge /system/bin/port-bridge /dev/smd0 /dev/ttyHSUSB0
+
+# Force loading of modem and Q6 images
+#service load-modem /system/bin/load-modem.sh
+service load-modem /sbin/mfgsrv sysattr write /dev/smd_pkt_loopback 1
+    oneshot
+    disabled
+
+# For PMIC workaround, we set cpu freq to 432000
+on property:ro.mfgkernel=1
+    write /sys/power/wake_lock mfgkernel
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor userspace
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed 432000
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor userspace
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_setspeed 432000
+
+service mfgsrv /sbin/mfgsrv -i -t /dev/ttyHSL0 -t /dev/ttyHSUSB1
+    disabled
+
+service htc_ebdlogd /sbin/htc_ebdlogd_recvy -s -k -F /sbin -p V
+    user root
+    disabled
+    oneshot
+    ioprio idle 0
+
+service htcbatt /sbin/htcbatt
+oneshot
+
+on property:ro.build.tags=test-keys
+    start htc_ebdlogd
+

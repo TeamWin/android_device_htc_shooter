@@ -1,0 +1,6 @@
+#
+# system.prop for device
+#
+#
+# UMS
+persist.sys.usb.config=mass_storage,adb
