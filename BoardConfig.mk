@@ -37,17 +37,18 @@ TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := scorpion
 
-TARGET_SPECIFIC_HEADER_PATH := device/htc/shooter/include
+# Scorpion optimizations
+TARGET_ARCH_VARIANT_CPU := cortex-a9
 
+# Bootloader
 TARGET_BOOTLOADER_BOARD_NAME := shooter
 
+# Kernel
 BOARD_KERNEL_CMDLINE := console=ttyHSL0 androidboot.hardware=shooter no_console_suspend=1
 BOARD_KERNEL_BASE := 0x48000000
 BOARD_KERNEL_PAGE_SIZE := 2048
-BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset 0x01200000 --tags_offset 0x00000100
+BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset 0x01000000 --tags_offset 0x00000100
 TARGET_PREBUILT_KERNEL := device/htc/shooter/recovery/kernel
-
-BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := shooter
 
 # cat /proc/emmc
 #dev:        size     erasesize name
@@ -65,13 +66,14 @@ BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := shooter
 #mmcblk0p25: 00400000 00000200 "modem_st1"
 #mmcblk0p26: 00400000 00000200 "modem_st2"
 
+# Filesystem
 TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 838859776
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 1252770816
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
 BOARD_FLASH_BLOCK_SIZE := 131072
 
-#TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
 BOARD_SDCARD_DEVICE_PRIMARY := /dev/block/mmcblk1p1
 BOARD_SDCARD_DEVICE_SECONDARY := /dev/block/mmcblk1
 BOARD_SDEXT_DEVICE := /dev/block/mmcblk1p2
@@ -79,22 +81,15 @@ BOARD_USES_MMCUTILS := true
 BOARD_HAS_NO_MISC_PARTITION := true
 BOARD_HAS_NO_SELECT_BUTTON := true
 
-# Scorpion optimizations
-TARGET_ARCH_VARIANT_CPU := cortex-a9
-
 # Custom LUN File Path
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/class/android_usb/android0/f_mass_storage/lun%d/file
 
-# Custom LUN File Path
-TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/class/android_usb/android0/f_mass_storage/lun0/file
-
 #TWRP
 TW_THEME := portrait_hdpi
-#TW_INCLUDE_DUMLOCK := true
+TW_INCLUDE_DUMLOCK := true
 TARGET_RECOVERY_INITRC := device/htc/shooter/recovery/init.rc
-#TW_BRIGHTNESS_PATH := /sys/devices/platform/msm_fb.590337/leds/lcd-backlight/brightness
+TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
 TW_EXCLUDE_MTP := true
-#TW_INCLUDE_CRYPTO := true
-
-#TARGET_USERIMAGES_USE_F2FS := true
+TW_INCLUDE_CRYPTO := true
+TW_NO_EXFAT_FUSE := true
 
