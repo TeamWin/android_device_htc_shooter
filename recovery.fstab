@@ -1,10 +1,13 @@
-# mount point	fstype		device			[device2] [length=]
+# mount point	fstype		device			[device2] [length=]	flags
 
-/recovery	emmc		/dev/block/mmcblk0p22
-/boot		emmc		/dev/block/mmcblk0p21
-/cache          ext4            /dev/block/mmcblk0p25
-/data           ext4            /dev/block/mmcblk0p24   length=-16384
-/sd-ext         ext4            /dev/block/mmcblk1p2
-/sdcard		vfat		/dev/block/mmcblk1p1	/dev/block/mmcblk1
-/system         ext4            /dev/block/mmcblk0p23
-/misc           emmc            /dev/block/mmcblk0p35
+/recovery	emmc		/dev/block/mmcblk0p22				flags=display="Recovery"
+/boot		emmc		/dev/block/mmcblk0p21				flags=display="Boot"
+/cache          ext4            /dev/block/mmcblk0p25				flags=display="Cache"
+/data           ext4            /dev/block/mmcblk0p24   length=-16384		flags=display="Data"
+/system         ext4            /dev/block/mmcblk0p23				flags=display="System"
+#/misc          emmc            /dev/block/mmcblk0p35
+
+# Removable storage
+/sdcard		vfat		/dev/block/mmcblk1p1	/dev/block/mmcblk1	flags=display="Micro SDcard";storage;wipeingui;removable;andsec
+/sd-ext         ext4            /dev/block/mmcblk1p2				flags=display="SD-Ext";wipeingui;removable
+/usb_otg	vfat		/dev/block/sda1		/dev/block/sda		flags=display="USB-OTG";storage;wipeingui;removable
