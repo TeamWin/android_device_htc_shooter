@@ -35,7 +35,7 @@ TARGET_CPU_ABI2 := armeabi
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_CPU_SMP := true
-TARGET_CPU_VARIANT := scorpion
+TARGET_CPU_VARIANT := cortex-a9
 
 # Scorpion optimizations
 TARGET_ARCH_VARIANT_CPU := cortex-a9
@@ -89,7 +89,6 @@ TW_THEME := portrait_hdpi
 TW_INCLUDE_DUMLOCK := true
 TARGET_RECOVERY_INITRC := device/htc/shooter/recovery/init.rc
 TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
-#TW_EXCLUDE_MTP := true
 TW_INCLUDE_CRYPTO := true
 TW_NO_EXFAT_FUSE := true
 
