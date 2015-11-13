@@ -15,19 +15,11 @@
 #
 
 # Recovery
-PRODUCT_PACKAGES += \
-    choice_fn \
-    detect_key \
-    htcbatt \
-    init.recovery.shooter.rc \
-    offmode_charging \
-    power_test
 PRODUCT_COPY_FILES += \
     device/htc/shooter/rootdir/etc/fstab.shooter:root/fstab.shooter \
     device/htc/shooter/rootdir/etc/init.shooter.usb.rc:root/init.shooter.usb.rc \
     device/htc/shooter/rootdir/etc/ueventd.shooter.rc:root/ueventd.shooter.rc \
-    device/htc/shooter/rootdir/etc/init.shooter.rc:root/init.shooter.rc \
-    bionic/libc/zoneinfo/tzdata:recovery/root/system/usr/share/zoneinfo/tzdata
+    device/htc/shooter/rootdir/etc/init.shooter.rc:root/init.shooter.rc
 
 # Inherit makefiles
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
